@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.unibonn.fuzzing</groupId>
+    <artifactId>jazzer-workshop</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Jazzer Workshop</name>
+    <description>
+        Hands-on exercises for learning coverage-guided fuzzing on the JVM
+        with Jazzer. Accompanies the 90-minute workshop at the University of Bonn.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <!--
+            Pinned versions. Do not change these without re-testing all
+            exercises. The Jazzer JUnit integration has changed across
+            releases, and the SBB binder pins Spring Boot / JCSMP for you.
+        -->
+        <jazzer.version>0.30.0</jazzer.version>
+        <junit.version>5.10.2</junit.version>
+        <surefire.version>3.2.5</surefire.version>
+        <sbb.binder.version>9.0.0</sbb.binder.version>
+    </properties>
+
+    <dependencies>
+        <!-- Jazzer JUnit integration. Pulls in jazzer + jazzer-api. -->
+        <dependency>
+            <groupId>com.code-intelligence</groupId>
+            <artifactId>jazzer-junit</artifactId>
+            <version>${jazzer.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 BOM. Ensures all junit-jupiter-* artifacts are aligned. -->
+        <dependency>
+            <groupId>org.junit</groupId>
+            <artifactId>junit-bom</artifactId>
+            <version>${junit.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            Exercise 06 dependency: the SBB Spring Cloud Stream Binder fork.
+            We use it to demonstrate how instrumentation scope affects
+            coverage growth and throughput. This pulls in Spring Boot,
+            Spring Cloud Stream and the Solace JCSMP client transitively,
+            so expect a ~200 MB download on the first build.
+        -->
+        <dependency>
+            <groupId>ch.sbb</groupId>
+            <artifactId>spring-cloud-stream-binder-solace</artifactId>
+            <version>${sbb.binder.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+
+            <!--
+                Surefire 3.x is required for JUnit 5.
+                We run ALL tests (including @FuzzTest) with the regular
+                `mvn test` invocation.
+
+                Fuzzing mode is activated by setting the environment
+                variable JAZZER_FUZZ=1 at invocation time. See README.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <!--
+                        Silences the JDK 21+ warning about dynamic agent
+                        loading, which Jazzer's instrumentation triggers.
+                    -->
+                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+
+                    <!--
+                        Forward the JAZZER_FUZZ and JAZZER_COVERAGE env
+                        vars to the forked test JVM. Without this,
+                        running `JAZZER_FUZZ=1 mvn test` would not
+                        actually enable fuzzing mode inside Surefire's
+                        fork.
+                    -->
+                    <environmentVariables>
+                        <JAZZER_FUZZ>${env.JAZZER_FUZZ}</JAZZER_FUZZ>
+                        <JAZZER_COVERAGE>${env.JAZZER_COVERAGE}</JAZZER_COVERAGE>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

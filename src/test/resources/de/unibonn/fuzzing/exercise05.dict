@@ -1,0 +1,23 @@
+# libFuzzer dictionary for Exercise 05.
+#
+# Each entry is a string literal that Jazzer will use as a mutation
+# seed. Useful for parsers gated on keywords or magic bytes.
+#
+# Format: name="value" or just "value". Escape sequences supported.
+
+"SELECT "
+"INSERT INTO "
+"UPDATE "
+"DELETE FROM "
+"CREATE TABLE "
+" FROM "
+" WHERE "
+" VALUES "
+" SET "
+"BLOB"
+"INT"
+"TEXT"
+"("
+")"
+","
+";"
