@@ -27,7 +27,7 @@ JAZZER_FUZZ=1 mvn -Dtest=Exercise01Test test
 It should find a crash within about a minute. This is expected — watch the status lines while it runs.
 
 - [ ] Jazzer produced periodic status lines in the terminal.
-- [ ] A file starting with `crash-` appeared in the project root.
+- [ ] A file starting with `crash-` appeared.
 
 > _Your notes: where exactly did the crash file appear?_
 >
