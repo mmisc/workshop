@@ -1,4 +1,5 @@
 target/
+.cifuzz-corpus/
 *.class
 *.jar
 *.war
