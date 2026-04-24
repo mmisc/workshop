@@ -28,9 +28,8 @@ It should finish within a few seconds with a failure. This is expected.
 
 - [ ] Jazzer produced periodic status lines in the terminal.
 - [ ] A file starting with `crash-` appeared in the project root.
-- [ ] A file starting with `Crash_` ending in `.java` also appeared.
 
-> _Your notes: where exactly did the crash file appear, and what is in the .java reproducer file?_
+> _Your notes: where exactly did the crash file appear?_
 >
 >
 >
@@ -83,12 +82,6 @@ Jazzer distinguishes between two kinds of findings:
 2. **Uncaught exceptions**: anything your target throws that is not caught, treated as a crash by default.
 
 > _Which of the two did you just see? How can you tell?_
->
->
-
-Now open the generated `Crash_<sha1>.java` file.
-
-> _What does this file do? Why is it useful separately from the raw `crash-<sha1>` bytes file?_
 >
 >
 
