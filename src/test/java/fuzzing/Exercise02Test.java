@@ -1,9 +1,9 @@
-package de.unibonn.fuzzing;
+package fuzzing;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import de.unibonn.fuzzing.exercise02.EnvParser;
+import fuzzing.exercise02.EnvParser;
 
 /**
  * Exercise 02 - Write your first fuzz target.

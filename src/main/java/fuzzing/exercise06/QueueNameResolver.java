@@ -1,4 +1,4 @@
-package de.unibonn.fuzzing.exercise06;
+package fuzzing.exercise06;
 
 import com.solace.spring.cloud.stream.binder.provisioning.SolaceProvisioningUtil;
 import com.solace.spring.cloud.stream.binder.util.QualityOfService;

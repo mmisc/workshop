@@ -1,4 +1,4 @@
-package de.unibonn.fuzzing.exercise05;
+package fuzzing.exercise05;
 
 /**
  * Exercise 05: A toy SQL-like query engine.

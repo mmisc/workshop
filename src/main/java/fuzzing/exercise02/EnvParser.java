@@ -1,4 +1,4 @@
-package de.unibonn.fuzzing.exercise02;
+package fuzzing.exercise02;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,10 +1,10 @@
-package de.unibonn.fuzzing;
+package fuzzing;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.DictionaryFile;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import de.unibonn.fuzzing.exercise05.QueryEngine;
+import fuzzing.exercise05.QueryEngine;
 
 /**
  * Exercise 05 - Dictionaries.
@@ -22,7 +22,7 @@ import de.unibonn.fuzzing.exercise05.QueryEngine;
  *   2. Enable the dictionary (uncomment the @DictionaryFile line
  *      below) and run again for 30 seconds.
  *   3. Compare the two `cov` values. The dictionary file lives at
- *      src/test/resources/de/unibonn/fuzzing/exercise05.dict
+ *      src/test/resources//fuzzing/exercise05.dict
  *
  * Run with:
  *
@@ -32,7 +32,7 @@ class Exercise05Test {
 
     @FuzzTest(maxDuration = "1m")
     // Uncomment the next line for the second run:
-    // @DictionaryFile(resourcePath = "de/unibonn/fuzzing/exercise05.dict")
+    // @DictionaryFile(resourcePath = "fuzzing/exercise05.dict")
     void fuzzQueryEngine(FuzzedDataProvider data) {
         String query = data.consumeRemainingAsString();
         try {
