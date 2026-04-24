@@ -73,7 +73,7 @@ set JAZZER_FUZZ=1 && mvn -Dtest=Exercise01Test test
 ```
 pom.xml                                      Build config, dependencies
 WORKSHEET.md                                 Fill-in-the-blanks worksheet
-src/main/java/fuzzing/
+src/main/java/de/unibonn/fuzzing/
   exercise01/AliasResolver.java              Works with Exercise01Test
   exercise02/EnvParser.java                  Works with Exercise02Test
   exercise03/RequestProcessor.java           Works with Exercise03Test
@@ -81,9 +81,9 @@ src/main/java/fuzzing/
   exercise05/QueryEngine.java                Works with Exercise05Test
   exercise06/QueueNameResolver.java          Works with Exercise06Test
   exercise07/TemplateReader.java             Works with Exercise07Test
-src/test/java/fuzzing/
+src/test/java/de/unibonn/fuzzing/
   Exercise01Test.java ... Exercise07Test.java
-src/test/resources/fuzzing/
+src/test/resources/de/unibonn/fuzzing/
   Exercise01TestInputs/                      Seed input for regression mode
   exercise05.dict                            libFuzzer-format dictionary
 ```
@@ -109,7 +109,7 @@ When Jazzer finds a crashing input, it writes two files:
 * `crash-<sha1>` in the project's working directory, containing the raw bytes.
 * `Crash_<sha1>.java` next to it, containing a standalone reproducer.
 
-Move the raw bytes file into `src/test/resources/fuzzing/<TestClass>Inputs/` to make it a permanent regression case that runs in every `mvn test`.
+Move the raw bytes file into `src/test/resources/de/unibonn/fuzzing/<TestClass>Inputs/` to make it a permanent regression case that runs in every `mvn test`.
 
 ## Things you will see that look like errors but aren't
 

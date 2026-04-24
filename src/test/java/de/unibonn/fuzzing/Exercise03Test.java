@@ -1,9 +1,9 @@
-package fuzzing;
+package de.unibonn.fuzzing;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import fuzzing.exercise03.RequestProcessor;
+import de.unibonn.fuzzing.exercise03.RequestProcessor;
 
 import java.io.File;
 import java.io.IOException;

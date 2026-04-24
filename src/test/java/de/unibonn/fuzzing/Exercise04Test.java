@@ -1,9 +1,9 @@
-package fuzzing;
+package de.unibonn.fuzzing;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import fuzzing.exercise04.PacketParser;
+import de.unibonn.fuzzing.exercise04.PacketParser;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

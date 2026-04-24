@@ -1,9 +1,9 @@
-package fuzzing;
+package de.unibonn.fuzzing;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import fuzzing.exercise06.QueueNameResolver;
+import de.unibonn.fuzzing.exercise06.QueueNameResolver;
 
 import org.springframework.expression.ExpressionException;
 
@@ -34,7 +34,7 @@ import org.springframework.expression.ExpressionException;
  *   2. Narrow the scope to only your own code, then re-run:
  *
  *        JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
- *            -Djazzer.instrumentation_includes='fuzzing.**' \
+ *            -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**' \
  *            test
  *
  *      Record `cov` and `exec/s` again.
@@ -47,7 +47,7 @@ import org.springframework.expression.ExpressionException;
  * the target library instrumented but NOT its logging and metrics
  * dependencies, you might pass something like:
  *
- *     fuzzing.**:com.solace.**
+ *     de.unibonn.fuzzing.**:com.solace.**
  *
  * Try that as a third data point if you have time.
  */

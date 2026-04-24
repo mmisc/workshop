@@ -1,10 +1,10 @@
-package fuzzing;
+package de.unibonn.fuzzing;
 
 import com.code_intelligence.jazzer.api.BugDetectors;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import fuzzing.exercise07.TemplateReader;
+import de.unibonn.fuzzing.exercise07.TemplateReader;
 
 import java.io.IOException;
 import java.nio.file.Path;

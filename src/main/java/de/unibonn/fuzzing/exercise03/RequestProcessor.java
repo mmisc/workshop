@@ -1,4 +1,4 @@
-package fuzzing.exercise03;
+package de.unibonn.fuzzing.exercise03;
 
 /**
  * Exercise 03: A small numeric request processor.

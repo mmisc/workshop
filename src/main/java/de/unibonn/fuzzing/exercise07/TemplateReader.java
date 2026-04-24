@@ -1,4 +1,4 @@
-package fuzzing.exercise07;
+package de.unibonn.fuzzing.exercise07;
 
 import java.io.IOException;
 import java.nio.file.Files;

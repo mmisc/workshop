@@ -1,9 +1,9 @@
-package fuzzing;
+package de.unibonn.fuzzing;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 
-import fuzzing.exercise01.AliasResolver;
+import de.unibonn.fuzzing.exercise01.AliasResolver;
 
 /**
  * Exercise 01 - Your first Jazzer run.
