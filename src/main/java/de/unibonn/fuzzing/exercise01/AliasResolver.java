@@ -1,5 +1,9 @@
 package de.unibonn.fuzzing.exercise01;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Exercise 01: A simple route-alias resolver.
  *
@@ -12,9 +16,22 @@ package de.unibonn.fuzzing.exercise01;
  */
 public final class AliasResolver {
 
+    private static final int HASH_ROUNDS = 500;
+
     private AliasResolver() {}
 
+    private static void hashRule(String rule) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] h = rule.getBytes(StandardCharsets.UTF_8);
+            for (int i = 0; i < HASH_ROUNDS; i++) h = md.digest(h);
+        } catch (NoSuchAlgorithmException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     public static String resolve(String rule) {
+        hashRule(rule == null ? "" : rule);
         if (rule == null) return "";
 
         int sep = rule.indexOf(':');

@@ -27,5 +27,7 @@ class Exercise01Test {
     void fuzzAliasResolver(FuzzedDataProvider data) {
         String input = data.consumeRemainingAsString();
         AliasResolver.resolve(input);
+        // Artificial slowdown so exec/s stays in a readable range and
+        // participants can watch several status lines before the crash.
     }
 }
