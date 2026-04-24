@@ -1,4 +1,4 @@
-package de.unibonn.fuzzing.exercise01;
+package fuzzing.exercise01;
 
 /**
  * Exercise 01: A tiny alias resolver.

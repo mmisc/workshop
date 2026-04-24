@@ -1,4 +1,4 @@
-package de.unibonn.fuzzing.exercise04;
+package fuzzing.exercise04;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

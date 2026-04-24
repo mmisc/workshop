@@ -89,7 +89,7 @@ Jazzer distinguishes between two kinds of findings:
 
 ## Checkpoint 3 - Writing your first fuzz target
 
-Open `src/test/java/de/unibonn/fuzzing/Exercise02Test.java`. The class is almost empty. Your job is to write a `@FuzzTest` that calls `EnvParser.parse(String)`.
+Open `src/test/java/fuzzing/Exercise02Test.java`. The class is almost empty. Your job is to write a `@FuzzTest` that calls `EnvParser.parse(String)`.
 
 Start with the simplest possible signature: a single `FuzzedDataProvider` parameter, and call `data.consumeRemainingAsString()` inside. You can copy the imports from Exercise 01 as a starting point.
 
@@ -197,7 +197,7 @@ JAZZER_FUZZ=1 mvn -Dtest=Exercise05Test test
 >
 >
 
-Now uncomment the `@DictionaryFile(resourcePath = "de/unibonn/fuzzing/exercise05.dict")` line in the test file.
+Now uncomment the `@DictionaryFile(resourcePath = "fuzzing/exercise05.dict")` line in the test file.
 
 > _Prediction: how much will `cov` change?_
 >
@@ -231,7 +231,7 @@ Now restrict instrumentation to only our code:
 
 ```
 JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
-    -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**' \
+    -Djazzer.instrumentation_includes='fuzzing.**' \
     test
 ```
 
@@ -250,7 +250,7 @@ Record after 30 seconds:
 Bonus: try a middle ground. Include your code AND the Solace binder package, but NOT Spring and not anything else. The pattern is colon-separated:
 
 ```
--Djazzer.instrumentation_includes='de.unibonn.fuzzing.**:com.solace.**'
+-Djazzer.instrumentation_includes='fuzzing.**:com.solace.**'
 ```
 
 > _Where does this land between the two extremes?_
