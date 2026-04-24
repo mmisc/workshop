@@ -32,6 +32,19 @@
         <sbb.binder.version>9.0.0</sbb.binder.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- JUnit 5 BOM. Ensures all junit-jupiter-* artifacts are aligned. -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- Jazzer JUnit integration. Pulls in jazzer + jazzer-api. -->
         <dependency>
@@ -41,14 +54,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 BOM. Ensures all junit-jupiter-* artifacts are aligned. -->
-        <dependency>
-            <groupId>org.junit</groupId>
-            <artifactId>junit-bom</artifactId>
-            <version>${junit.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
