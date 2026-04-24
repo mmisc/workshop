@@ -12,9 +12,9 @@ import de.unibonn.fuzzing.exercise01.AliasResolver;
  *
  *   JAZZER_FUZZ=1 mvn -Dtest=Exercise01Test test
  *
- * Expected behaviour: Jazzer finds an ArrayIndexOutOfBoundsException
- * within a few seconds and writes a crash file. Open the crash file
- * and inspect the stack trace.
+ * Expected behaviour: Jazzer explores the input space for ~30–60 seconds,
+ * then finds a StringIndexOutOfBoundsException and writes a crash file.
+ * Watch the status lines while it runs — that is Checkpoint 1.
  *
  * Goals for this checkpoint:
  *   - Get a working Jazzer run on your machine.

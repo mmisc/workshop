@@ -24,7 +24,7 @@ Run the ready-made fuzz test from the command line:
 JAZZER_FUZZ=1 mvn -Dtest=Exercise01Test test
 ```
 
-It should finish within a few seconds with a failure. This is expected.
+It should find a crash within about a minute. This is expected — watch the status lines while it runs.
 
 - [ ] Jazzer produced periodic status lines in the terminal.
 - [ ] A file starting with `crash-` appeared in the project root.

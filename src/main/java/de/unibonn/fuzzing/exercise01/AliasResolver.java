@@ -1,32 +1,47 @@
 package de.unibonn.fuzzing.exercise01;
 
 /**
- * Exercise 01: A tiny alias resolver.
+ * Exercise 01: A simple route-alias resolver.
  *
- * Parses strings of the form "alias:target" and returns either the
- * uppercased target (for the "admin" alias) or the alias itself.
+ * Parses strings of the form "PRIORITY:ROUTE" where PRIORITY is 1-9
+ * and ROUTE is a path optionally containing a template variable in {braces}.
+ * When a template variable is present, returns its first character as the alias key.
  *
- * This class is used by the worked example in Exercise 01 and contains
- * at least one planted bug that Jazzer should find within seconds.
- * Do not fix it; the point is to observe Jazzer's output.
+ * This class contains a planted bug that Jazzer should find within about a minute.
+ * Do not fix it; the goal is to observe Jazzer discovering it step by step.
  */
 public final class AliasResolver {
 
-    private AliasResolver() {
-        // utility class
-    }
+    private AliasResolver() {}
 
-    public static String resolve(String input) {
-        if (input == null) {
+    public static String resolve(String rule) {
+        if (rule == null) return "";
+
+        int sep = rule.indexOf(':');
+        if (sep <= 0) return "";
+
+        int priority;
+        try {
+            priority = Integer.parseInt(rule.substring(0, sep));
+        } catch (NumberFormatException e) {
             return "";
         }
-        String[] parts = input.split(":");
-        if (parts[0].equals("admin")) {
-            // Planted bug: when input is exactly "admin" (no colon),
-            // parts.length == 1 and parts[1] throws
-            // ArrayIndexOutOfBoundsException.
-            return parts[1].toUpperCase();
+        if (priority < 1 || priority > 9) return "";
+
+        String route = rule.substring(sep + 1);
+        if (!route.startsWith("/")) return "";
+
+        // Extract optional template variable from routes like /user/{name}/view.
+        int open = route.indexOf('{');
+        if (open >= 0) {
+            int close = route.indexOf('}', open + 1);
+            if (close > open) {
+                String varName = route.substring(open + 1, close);
+                // Bug: no check for empty variable name — throws
+                // StringIndexOutOfBoundsException on routes like "/{}"
+                return priority + ":" + varName.charAt(0);
+            }
         }
-        return parts[0];
+        return priority + ":" + route;
     }
 }
