@@ -326,6 +326,7 @@ Record after 30 seconds:
 > `cov` = ________   `exec/s` = ________
 
 > _Which went up? Which went down? Explain the trade-off in your own words._
+> (Hint: `cov` may stay flat because `QueueNameResolver` itself is tiny — focus on `exec/s` and `rss`.)
 >
 >
 
@@ -333,7 +334,7 @@ Record after 30 seconds:
 >
 >
 
-Bonus: try a middle ground. Include your code AND the Solace binder package, but NOT Spring and not anything else. The pattern is colon-separated:
+Bonus: try a middle ground. Include your code AND the Solace binder package, but NOT Spring and not anything else. Jazzer uses the platform path separator to split the list (`:` on Linux/macOS, `;` on Windows):
 
 ```bash
 # Linux / macOS
@@ -344,7 +345,7 @@ JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
 ```powershell
 # Windows (PowerShell)
 $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
-    "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**:com.solace.**" `
+    "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**;com.solace.**" `
     test
 ```
 
