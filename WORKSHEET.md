@@ -12,7 +12,8 @@ your answers between exercises.
 - Where you see `> _Prediction:_`, write your guess BEFORE running the command.
 - Where you see a checklist `[ ]`, tick it off when done.
 
-All commands assume you are in the project root and have run `mvn test-compile` at least once. See `README.md` for Windows command-line variants.
+All commands assume you are in the project root and have run `mvn test-compile` at least once.
+Each command block shows a Linux/macOS variant and a Windows (PowerShell) variant.
 
 ---
 
@@ -20,8 +21,13 @@ All commands assume you are in the project root and have run `mvn test-compile` 
 
 Run the ready-made fuzz test from the command line:
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise01Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise01Test test
 ```
 
 It should find a crash within about a minute. This is expected — watch the status lines while it runs.
@@ -95,7 +101,16 @@ Start with the simplest possible signature: a single `FuzzedDataProvider` parame
 
 - [ ] My target compiles.
 - [ ] My target actually calls `EnvParser.parse`.
-- [ ] Running `JAZZER_FUZZ=1 mvn -Dtest=Exercise02Test test` produces Jazzer output (not "no tests found").
+- [ ] Running the command below produces Jazzer output (not "no tests found").
+
+```bash
+# Linux / macOS
+JAZZER_FUZZ=1 mvn -Dtest=Exercise02Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise02Test test
+```
 
 > _Did Jazzer find anything? If yes, what? If no, note the last `cov` and `exec/s` values before you stopped it._
 >
@@ -124,8 +139,13 @@ Now modify your target: instead of `consumeRemainingAsString()`, consume two typ
 
 Open `Exercise03Test.java`. This target compiles and runs, but it finds almost nothing. It contains four problems. Run it first and record the baseline:
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise03Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise03Test test
 ```
 
 | Metric before any fix | Value |
@@ -161,8 +181,13 @@ You just fixed some problems in your OWN code. There is a related concept for pr
 
 Open `Exercise04Test.java`. The naive fuzz target passes raw fuzzer bytes to `PacketParser.parse`. Run it for 60 seconds:
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise04Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise04Test test
 ```
 
 > _Where does `cov` plateau?_
@@ -189,8 +214,13 @@ Open `Exercise05Test.java`. The target parses a SQL-like language (`SELECT`, `IN
 
 First, run without a dictionary for 30 seconds:
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise05Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise05Test test
 ```
 
 > _What is `cov` after 30 seconds?_
@@ -219,8 +249,13 @@ Open `Exercise06Test.java`. `QueueNameResolver.resolve` delegates most of its wo
 
 First run: default scope (everything instrumented).
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test test
 ```
 
 Record after 30 seconds:
@@ -229,9 +264,16 @@ Record after 30 seconds:
 
 Now restrict instrumentation to only our code:
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
     -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**' \
+    test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
+    "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**" `
     test
 ```
 
@@ -249,8 +291,17 @@ Record after 30 seconds:
 
 Bonus: try a middle ground. Include your code AND the Solace binder package, but NOT Spring and not anything else. The pattern is colon-separated:
 
+```bash
+# Linux / macOS
+JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
+    -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**:com.solace.**' \
+    test
 ```
--Djazzer.instrumentation_includes='de.unibonn.fuzzing.**:com.solace.**'
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
+    "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**:com.solace.**" `
+    test
 ```
 
 > _Where does this land between the two extremes?_
@@ -271,8 +322,13 @@ Open `Exercise07Test.java`. `TemplateReader.readTemplate` reads a file whose pat
 
 Run the test:
 
-```
+```bash
+# Linux / macOS
 JAZZER_FUZZ=1 mvn -Dtest=Exercise07Test test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise07Test test
 ```
 
 Jazzer should report a `FuzzerSecurityIssue*` rather than an ordinary exception.
