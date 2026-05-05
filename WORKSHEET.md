@@ -15,6 +15,39 @@ your answers between exercises.
 All commands assume you are in the project root and have run `mvn test-compile` at least once.
 Each command block shows a Linux/macOS variant and a Windows (PowerShell) variant.
 
+### Resetting an exercise
+
+Each run accumulates a corpus and crash inputs. To start an exercise from scratch,
+replace `Exercise05` with the exercise you want to reset:
+
+```bash
+# Linux / macOS — reset one exercise
+ex=Exercise05
+rm -rf ".cifuzz-corpus/de.unibonn.fuzzing.${ex}Test" \
+       "src/test/resources/de/unibonn/fuzzing/${ex}TestInputs"
+```
+```powershell
+# Windows (PowerShell) — reset one exercise
+$ex = "Exercise05"
+Remove-Item -Recurse -Force ".cifuzz-corpus\de.unibonn.fuzzing.${ex}Test" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force "src\test\resources\de\unibonn\fuzzing\${ex}TestInputs" -ErrorAction SilentlyContinue
+```
+
+To reset everything at once:
+
+```bash
+# Linux / macOS — reset all exercises
+rm -rf .cifuzz-corpus src/test/resources/de/unibonn/fuzzing/*TestInputs
+```
+```powershell
+# Windows (PowerShell) — reset all exercises
+Remove-Item -Recurse -Force ".cifuzz-corpus" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force "src\test\resources\de\unibonn\fuzzing\*TestInputs" -ErrorAction SilentlyContinue
+```
+
+The `target/` directory mirrors `src/test/resources` and is repopulated automatically
+by the next Maven run — no need to clean it separately.
+
 ---
 
 ## Checkpoint 0 - Setup check
@@ -212,28 +245,39 @@ The file contains a commented hint showing one way to get past the blocker by co
 
 Open `Exercise05Test.java`. The target parses a SQL-like language (`SELECT`, `INSERT INTO`, `CREATE TABLE`, ...). Without help, Jazzer has to guess these keywords byte-by-byte.
 
-First, run without a dictionary for 30 seconds:
+First, run without a dictionary for 30 seconds. We also pass `-Djazzer.trace=cov` to
+disable Jazzer's comparison tracing (`cmp`), which would otherwise silently act as an
+auto-dictionary and hide the effect we want to observe:
 
 ```bash
 # Linux / macOS
-JAZZER_FUZZ=1 mvn -Dtest=Exercise05Test test
+JAZZER_FUZZ=1 mvn -Dtest=Exercise05Test -Djazzer.trace=cov test
 ```
 ```powershell
 # Windows (PowerShell)
-$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise05Test test
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise05Test "-Djazzer.trace=cov" test
 ```
 
 > _What is `cov` after 30 seconds?_
 >
 >
 
-Now uncomment the `@DictionaryFile(resourcePath = "de/unibonn/fuzzing/exercise05.dict")` line in the test file.
+Now uncomment the `@DictionaryFile(resourcePath = "exercise05.dict")` line in the test file.
 
 > _Prediction: how much will `cov` change?_
 >
 >
 
-Run it again.
+Run it again (keep `-Djazzer.trace=cov` so only the dictionary changes between the two runs):
+
+```bash
+# Linux / macOS
+JAZZER_FUZZ=1 mvn -Dtest=Exercise05Test -Djazzer.trace=cov test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise05Test "-Djazzer.trace=cov" test
+```
 
 > _Actual result? Under what conditions do you think dictionaries help the most?_
 >
