@@ -35,31 +35,25 @@ import java.util.List;
  */
 class Exercise03Test {
 
-    // Problem hint 1: this state accumulates across iterations.
     private static final List<String> seenInputs = new ArrayList<>();
 
     @FuzzTest(maxDuration = "1m")
     void fuzzBadTarget(FuzzedDataProvider data) throws IOException {
         String input = data.consumeRemainingAsString();
 
-        // Problem hint 2: rejecting almost all fuzzer-generated inputs.
         if (input.length() < 20 || !input.startsWith("REQUEST:")) {
             return;
         }
 
-        // Problem hint 3: synchronous disk I/O on every iteration.
         File tmp = File.createTempFile("fuzz", ".tmp");
         tmp.deleteOnExit();
         Files.writeString(tmp.toPath(), input);
 
-        // Accumulate (problem hint 1 manifests here).
         seenInputs.add(input);
 
-        // Problem hint 4: swallowing every exception hides all findings.
         try {
             RequestProcessor.compute(input.substring("REQUEST:".length()));
         } catch (Throwable t) {
-            // Intentionally ignored. This is wrong.
         }
     }
 }
