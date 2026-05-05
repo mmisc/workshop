@@ -287,11 +287,16 @@ $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise05Test "-Djazzer.trace=cov" test
 
 ## Checkpoint 7 - Instrumentation and its effects
 
-By default, Jazzer's agent instruments almost all classes it sees (everything except JDK internals). This means third-party libraries on your classpath are instrumented too. That sounds good, but it has a cost in throughput, and the extra coverage signal is not always useful.
+In JUnit mode, Jazzer instruments only your project's own compiled classes by
+default — third-party library JARs on the classpath are **not** instrumented
+unless you explicitly add them. That sounds conservative, but widening the scope
+has a cost in throughput, and the extra coverage signal is not always useful.
 
-Open `Exercise06Test.java`. `QueueNameResolver.resolve` delegates most of its work to the SBB Solace binder and Spring Expression, both instrumented by default.
+Open `Exercise06Test.java`. `QueueNameResolver.resolve` delegates almost all of
+its work to `SolaceProvisioningUtil.getQueueNames()`, which internally evaluates
+two SpEL expressions and validates queue names against Solace naming rules.
 
-First run: default scope (everything instrumented).
+First run: default scope (only your code instrumented).
 
 ```bash
 # Linux / macOS
@@ -306,35 +311,8 @@ Record after 30 seconds:
 
 > `cov` = ________   `exec/s` = ________
 
-Now restrict instrumentation to only our code:
-
-```bash
-# Linux / macOS
-JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
-    -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**' \
-    test
-```
-```powershell
-# Windows (PowerShell)
-$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
-    "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**" `
-    test
-```
-
-Record after 30 seconds:
-
-> `cov` = ________   `exec/s` = ________
-
-> _Which went up? Which went down? Explain the trade-off in your own words._
-> (Hint: `cov` may stay flat because `QueueNameResolver` itself is tiny — focus on `exec/s` and `rss`.)
->
->
-
-> _Under what circumstances would you accept the slower `exec/s` in exchange for higher `cov`? When would you want the reverse?_
->
->
-
-Bonus: try a middle ground. Include your code AND the Solace binder package, but NOT Spring and not anything else. Jazzer uses the platform path separator to split the list (`:` on Linux/macOS, `;` on Windows):
+Now widen the scope to also instrument the Solace binder. Jazzer uses the
+platform path separator to split the list (`:` on Linux/macOS, `;` on Windows):
 
 ```bash
 # Linux / macOS
@@ -349,7 +327,35 @@ $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
     test
 ```
 
-> _Where does this land between the two extremes?_
+Record after 30 seconds:
+
+> `cov` = ________   `exec/s` = ________
+
+> _Which went up? Which went down? Explain the trade-off in your own words._
+>
+>
+
+> _Under what circumstances would you accept the slower `exec/s` in exchange for higher `cov`? When would you want the reverse?_
+>
+>
+
+Bonus: widen further to also instrument Spring Expression (the SpEL engine that
+Solace uses internally):
+
+```bash
+# Linux / macOS
+JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
+    -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**:com.solace.**:org.springframework.expression.**' \
+    test
+```
+```powershell
+# Windows (PowerShell)
+$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
+    "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**;com.solace.**;org.springframework.expression.**" `
+    test
+```
+
+> _Where does this land compared to the previous two runs?_
 >
 >
 

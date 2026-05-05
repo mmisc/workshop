@@ -1,49 +1,62 @@
 package de.unibonn.fuzzing.exercise06;
 
+import com.solace.spring.cloud.stream.binder.properties.SolaceConsumerProperties;
 import com.solace.spring.cloud.stream.binder.provisioning.SolaceProvisioningUtil;
-import com.solace.spring.cloud.stream.binder.util.QualityOfService;
+import com.solace.spring.cloud.stream.binder.provisioning.SolaceProvisioningUtil.QueueNames;
 
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
 
 /**
- * Exercise 06: Resolve a queue name from a group name and a SpEL
- * expression.
+ * Exercise 06: Resolve consumer queue names via the SBB Solace binder.
  *
- * This mirrors the pattern used inside
- * com.solace.spring.cloud.stream.binder.provisioning
- * .SolaceProvisioningUtil#resolveQueueNameExpression (which is
- * private in the SBB binder). We call the SBB binder's public
- * helper SolaceProvisioningUtil.isAnonEndpoint() to decide whether
- * to skip expression evaluation, and otherwise evaluate the
- * expression via Spring's SpelExpressionParser.
+ * This calls SolaceProvisioningUtil.getQueueNames(), which internally
+ * evaluates two SpEL expressions (queueNameExpression and
+ * errorQueueNameExpression) and validates the resulting queue names
+ * against Solace naming rules.
  *
- * The interesting property for Exercise 06: most of the work done
- * here happens inside third-party libraries (com.solace.**,
- * org.springframework.expression.**), not in this class. That
- * makes this method a good target to observe how
- * --instrumentation_includes (jazzer.instrumentation_includes)
- * trades coverage against throughput.
+ * The interesting property for Exercise 06: almost all the work
+ * happens inside com.solace.** and org.springframework.expression.**,
+ * not in this class. With default instrumentation Jazzer tracks every
+ * branch inside those libraries; with
+ *   -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**'
+ * only the ~5 branches in this class are tracked.
+ *
+ * That contrast makes cov and exec/s move in opposite directions,
+ * which is the point of the exercise.
  */
 public final class QueueNameResolver {
 
-    private QueueNameResolver() {
-        // utility class
-    }
+    private QueueNameResolver() {}
 
-    public static String resolve(String groupName, String expression) {
-        if (SolaceProvisioningUtil.isAnonEndpoint(groupName, QualityOfService.AT_LEAST_ONCE)) {
-            return "anon";
+    /**
+     * Resolve the consumer queue names for a given destination and group,
+     * honouring optional SpEL expressions for the queue and error-queue names.
+     *
+     * @param destination         the Spring Cloud Stream destination name
+     * @param groupName           the consumer group name
+     * @param queueNameExpression optional SpEL expression for the queue name
+     * @param errorQueueExpr      optional SpEL expression for the error-queue name
+     * @param isAnonymous         true to request an anonymous (non-durable) queue
+     */
+    public static QueueNames resolve(
+            String destination,
+            String groupName,
+            String queueNameExpression,
+            String errorQueueExpr,
+            boolean isAnonymous) {
+
+        SolaceConsumerProperties consumerProps = new SolaceConsumerProperties();
+        if (queueNameExpression != null && !queueNameExpression.isEmpty()) {
+            consumerProps.setQueueNameExpression(queueNameExpression);
         }
-        if (expression == null || expression.isEmpty()) {
-            return groupName;
+        if (errorQueueExpr != null && !errorQueueExpr.isEmpty()) {
+            consumerProps.setErrorQueueNameExpression(errorQueueExpr);
         }
-        ExpressionParser parser = new SpelExpressionParser();
-        StandardEvaluationContext ctx = new StandardEvaluationContext(groupName);
-        Expression exp = parser.parseExpression(expression);
-        Object result = exp.getValue(ctx);
-        return result != null ? result.toString() : null;
+
+        ExtendedConsumerProperties<SolaceConsumerProperties> extProps =
+                new ExtendedConsumerProperties<>(consumerProps);
+
+        return SolaceProvisioningUtil.getQueueNames(
+                destination, groupName, extProps, isAnonymous);
     }
 }

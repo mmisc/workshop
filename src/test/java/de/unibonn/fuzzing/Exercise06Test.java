@@ -5,22 +5,17 @@ import com.code_intelligence.jazzer.junit.FuzzTest;
 
 import de.unibonn.fuzzing.exercise06.QueueNameResolver;
 
-
 /**
  * Exercise 06 - Instrumentation scope.
  *
- * QueueNameResolver.resolve() delegates most of its work to the
- * SBB Spring Cloud Stream Binder (com.solace.**) and Spring
- * Expression (org.springframework.expression.**). By default,
- * Jazzer instruments BOTH your code AND all third-party libraries
- * on the classpath (only JDK internals are excluded).
+ * QueueNameResolver.resolve() calls SolaceProvisioningUtil.getQueueNames(),
+ * which evaluates two SpEL expressions internally and validates the
+ * resulting queue names against Solace naming rules. Almost all the
+ * executed code lives inside com.solace.** and
+ * org.springframework.expression.** — NOT in this package.
  *
- * That sounds good, but it has a cost:
- *
- *   - More instrumented classes = more coverage signal to mutate
- *     against, BUT also more irrelevant signal (library internals
- *     the fuzzer cannot meaningfully steer).
- *   - More instrumented classes = slower per-iteration throughput.
+ * That makes this a good target to observe how
+ * jazzer.instrumentation_includes trades coverage signal against throughput.
  *
  * Your task:
  *
@@ -28,38 +23,50 @@ import de.unibonn.fuzzing.exercise06.QueueNameResolver;
  *
  *        JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test test
  *
- *      Record `cov` and `exec/s`.
+ *      Record cov and exec/s.
  *
- *   2. Narrow the scope to only your own code, then re-run:
+ *   2. Widen to also instrument the Solace binder, then re-run:
  *
- *        JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
- *            -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**' \
- *            test
+ *        Linux/macOS:
+ *          JAZZER_FUZZ=1 mvn -Dtest=Exercise06Test \
+ *              -Djazzer.instrumentation_includes='de.unibonn.fuzzing.**:com.solace.**' \
+ *              test
  *
- *      Record `cov` and `exec/s` again.
+ *        Windows (PowerShell):
+ *          $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
+ *              "-Djazzer.instrumentation_includes=de.unibonn.fuzzing.**;com.solace.**" `
+ *              test
  *
- *   3. Compare. Which went up? Which went down? When would you
- *      want each configuration?
+ *      Record cov and exec/s again.
  *
- * Note: the instrumentation_includes flag takes a colon-separated
- * list of glob patterns. For the realistic case where you DO want
- * the target library instrumented but NOT its logging and metrics
- * dependencies, you might pass something like:
+ *   3. Compare. Which went up? Which went down? When would you want
+ *      each configuration?
  *
- *     de.unibonn.fuzzing.**:com.solace.**
+ * Bonus — widen further to also instrument Spring Expression:
  *
- * Try that as a third data point if you have time.
+ *        Linux/macOS:
+ *          -Djazzer.instrumentation_includes=
+ *            'de.unibonn.fuzzing.**:com.solace.**:org.springframework.expression.**'
+ *
+ *        Windows (PowerShell):
+ *          "-Djazzer.instrumentation_includes=
+ *            de.unibonn.fuzzing.**;com.solace.**;org.springframework.expression.**"
  */
 class Exercise06Test {
 
     @FuzzTest(maxDuration = "1m")
     void fuzzQueueNameResolver(FuzzedDataProvider data) {
-        String groupName = data.consumeString(20);
-        String expression = data.consumeRemainingAsString();
+        String destination       = data.consumeString(30);
+        String groupName         = data.consumeString(20);
+        boolean isAnonymous      = data.consumeBoolean();
+        String queueNameExpr     = data.consumeString(50);
+        String errorQueueExpr    = data.consumeRemainingAsString();
         try {
-            QueueNameResolver.resolve(groupName, expression);
+            QueueNameResolver.resolve(
+                    destination, groupName, queueNameExpr, errorQueueExpr, isAnonymous);
         } catch (Throwable ignored) {
-            // keep the fuzzer running for the timing experiment
+            // SpEL errors, Solace validation exceptions, etc. are not
+            // findings here — keep the run alive for the timing comparison.
         }
     }
 }
