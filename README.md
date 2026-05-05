@@ -17,7 +17,6 @@ Accompanies the worksheet in `WORKSHEET.md`. Keep both open.
 
 ## Prerequisites
 
-* JDK 17 (exactly 17 is tested; 21 should also work). Check with `java -version`.
 * Maven 3.8+.
 * An IDE with JUnit 5 support (IntelliJ IDEA, VS Code, Eclipse).
 * A network connection for the first build. Maven will download roughly 200 MB of dependencies because the SBB Spring Cloud Stream Binder (used by Exercise 06) pulls in Spring Boot 4 and the Solace JCSMP client transitively. **Please run the setup step below on a good connection BEFORE the workshop.**
