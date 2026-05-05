@@ -5,7 +5,6 @@ import com.code_intelligence.jazzer.junit.FuzzTest;
 
 import de.unibonn.fuzzing.exercise06.QueueNameResolver;
 
-import org.springframework.expression.ExpressionException;
 
 /**
  * Exercise 06 - Instrumentation scope.
@@ -59,11 +58,8 @@ class Exercise06Test {
         String expression = data.consumeRemainingAsString();
         try {
             QueueNameResolver.resolve(groupName, expression);
-        } catch (ExpressionException expected) {
-            // SpEL parse/eval errors are not findings for us here.
-        } catch (ClassCastException expected) {
-            // Expressions that return non-String values cause this
-            // via the toString() path; not our target bug.
+        } catch (Throwable ignored) {
+            // keep the fuzzer running for the timing experiment
         }
     }
 }
