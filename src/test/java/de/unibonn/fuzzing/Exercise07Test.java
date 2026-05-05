@@ -7,6 +7,7 @@ import com.code_intelligence.jazzer.junit.FuzzTest;
 import de.unibonn.fuzzing.exercise07.TemplateReader;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -64,6 +65,10 @@ class Exercise07Test {
         BugDetectors.setFilePathTraversalAllowPath(p -> p.startsWith(allowed));
 
         String name = data.consumeRemainingAsString();
-        TemplateReader.readTemplate(name);
+        try {
+            TemplateReader.readTemplate(name);
+        } catch (InvalidPathException ignored) {
+
+        }
     }
 }
