@@ -32,7 +32,7 @@ class Exercise05Test {
 
     @FuzzTest(maxDuration = "1m")
     // Uncomment the next line for the second run:
-    // @DictionaryFile(resourcePath = "de/unibonn/fuzzing/exercise05.dict")
+    // @DictionaryFile(resourcePath = "exercise05.dict")
     void fuzzQueryEngine(FuzzedDataProvider data) {
         String query = data.consumeRemainingAsString();
         try {
