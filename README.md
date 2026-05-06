@@ -1,8 +1,7 @@
 # Jazzer Fuzzing Workshop
 
 Hands-on exercises for learning coverage-guided fuzzing on the JVM with
-[Jazzer](https://github.com/CodeIntelligenceTesting/jazzer), designed for
-a 90-minute practical session.
+[Jazzer](https://github.com/CodeIntelligenceTesting/jazzer).
 
 Accompanies the worksheet in `WORKSHEET.md`. Keep both open.
 
@@ -67,48 +66,6 @@ On Windows cmd.exe:
 set JAZZER_FUZZ=1 && mvn -Dtest=Exercise01Test test
 ```
 
-## Where things live
-
-```
-pom.xml                                      Build config, dependencies
-WORKSHEET.md                                 Fill-in-the-blanks worksheet
-src/main/java/de/unibonn/fuzzing/
-  exercise01/AliasResolver.java              Works with Exercise01Test
-  exercise02/EnvParser.java                  Works with Exercise02Test
-  exercise03/RequestProcessor.java           Works with Exercise03Test
-  exercise04/PacketParser.java               Works with Exercise04Test
-  exercise05/QueryEngine.java                Works with Exercise05Test
-  exercise06/QueueNameResolver.java          Works with Exercise06Test
-  exercise07/TemplateReader.java             Works with Exercise07Test
-src/test/java/de/unibonn/fuzzing/
-  Exercise01Test.java ... Exercise07Test.java
-src/test/resources/de/unibonn/fuzzing/
-  Exercise01TestInputs/                      Seed input for regression mode
-  exercise05.dict                            libFuzzer-format dictionary
-```
-
-## Exercises at a glance
-
-| # | Topic                                      | Class                |
-|---|--------------------------------------------|----------------------|
-| 1 | Read Jazzer output on a ready-to-run test  | `Exercise01Test`     |
-| 2 | Write your first fuzz target from scratch  | `Exercise02Test`     |
-| 3 | Refactor a deliberately bad fuzz target    | `Exercise03Test`     |
-| 4 | Get past a CRC checksum (a fuzz blocker)   | `Exercise04Test`     |
-| 5 | Use a dictionary on a keyword-gated parser | `Exercise05Test`     |
-| 6 | Control instrumentation scope              | `Exercise06Test`     |
-| 7 | Trigger the path traversal sanitizer       | `Exercise07Test`     |
-
-Each exercise file has detailed in-line instructions at the top. Work through them in order; the worksheet will prompt you for observations at each step.
-
-## Where crash files go
-
-When Jazzer finds a crashing input, it writes two files:
-
-* `crash-<sha1>` in the project's working directory, containing the raw bytes.
-* `Crash_<sha1>.java` next to it, containing a standalone reproducer.
-
-Move the raw bytes file into `src/test/resources/de/unibonn/fuzzing/<TestClass>Inputs/` to make it a permanent regression case that runs in every `mvn test`.
 
 ## Things you will see that look like errors but aren't
 
