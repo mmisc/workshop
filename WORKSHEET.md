@@ -150,21 +150,16 @@ $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise02Test test
 >
 >
 
-Now modify your target: instead of `consumeRemainingAsString()`, consume two typed values first (`int`, `boolean`, ...) and THEN the remaining string. You do not have to use the int or boolean in the call to `parse`; we just want to see what changes.
+**Note — typed consume methods for more complex targets:**
+`FuzzedDataProvider` offers more than just `consumeRemainingAsString()`. When the code under test takes several parameters — or when you want to construct a structured object from fuzz bytes — you can carve the byte stream into typed pieces:
 
-> _Prediction: will `cov` go up, down, or stay the same compared to the first run?_
->
->
+```java
+int    port    = data.consumeInt(1, 65535);       // bounded int
+boolean useTls = data.consumeBoolean();
+String  host   = data.consumeRemainingAsString();  // rest of the stream
+```
 
-> _What actually happened? If it surprised you, why do you think it happened?_
->
->
-
-**Pitfall to check:** the ORDER of `consume*` calls matters. Each call consumes from the same underlying byte stream, so swapping two calls changes how Jazzer's mutations map to your parameters. Swap two of your `consume*` calls and run again.
-
-> _Did this change what Jazzer finds, or how quickly? Write down what you see._
->
->
+Each call consumes bytes from the front of the shared stream in order, so the ORDER of calls determines how mutations map to each parameter. Use `consumeRemainingAsString()` (or `consumeRemainingAsBytes()`) last — once called, no bytes are left for subsequent calls. For targets that parse a single string (like `EnvParser`), the plain `consumeRemainingAsString()` approach you already have is the right choice.
 
 ---
 
