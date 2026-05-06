@@ -165,7 +165,7 @@ Each call consumes bytes from the front of the shared stream in order, so the OR
 
 ## Checkpoint 4 - Fuzz blockers
 
-You just fixed some problems in your OWN code. There is a related concept for problems in the CODE UNDER TEST: a **fuzz blocker** is a piece of code in the target that prevents the fuzzer from reaching interesting inputs no matter how long it runs. Common examples:
+A **fuzz blocker** is a piece of code in the target that prevents the fuzzer from reaching interesting inputs no matter how long it runs. Common examples:
 
 - A checksum or magic-byte check at the top of a parser.
 - A size or length check that rejects most inputs.
@@ -201,7 +201,7 @@ The file contains a commented hint showing one way to get past the blocker by co
 
 ---
 
-## Checkpoint 6 - Dictionaries
+## Checkpoint 5 - Dictionaries
 
 Open `Exercise05Test.java`. The target parses a SQL-like language (`SELECT`, `INSERT INTO`, `CREATE TABLE`, ...). Without help, Jazzer has to guess these keywords byte-by-byte.
 
@@ -245,7 +245,7 @@ $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise05Test "-Djazzer.trace=cov" test
 
 ---
 
-## Checkpoint 7 - Instrumentation and its effects
+## Checkpoint 6 - Instrumentation and its effects
 
 In JUnit mode, Jazzer instruments only your project's own compiled classes by
 default — third-party library JARs on the classpath are **not** instrumented
@@ -321,7 +321,7 @@ $env:JAZZER_FUZZ=1; mvn -Dtest=Exercise06Test `
 
 ---
 
-## Checkpoint 8 - A bug detector in action
+## Checkpoint 7 - A bug detector in action
 
 So far all your findings have been uncaught exceptions: NPE, AIOOBE, ArithmeticException. Jazzer also has built-in detectors for specific security-relevant patterns: SQL injection, path traversal, SSRF, insecure deserialization, and more. These encode knowledge about vulnerability classes.
 
