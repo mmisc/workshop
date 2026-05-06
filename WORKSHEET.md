@@ -163,42 +163,7 @@ Each call consumes bytes from the front of the shared stream in order, so the OR
 
 ---
 
-## Checkpoint 4 - What makes a bad fuzz target
-
-Open `Exercise03Test.java`. This target compiles and runs, but it finds almost nothing. It contains four problems. Run it first and record the baseline:
-
-```bash
-# Linux / macOS
-JAZZER_FUZZ=1 mvn -Dtest=Exercise03Test test
-```
-```powershell
-# Windows (PowerShell)
-$env:JAZZER_FUZZ=1; mvn -Dtest=Exercise03Test test
-```
-
-| Metric before any fix | Value |
-|-----------------------|-------|
-| `exec/s`              |       |
-| `cov` after 30s       |       |
-| Findings after 30s    |       |
-
-Now find and fix the problems, one at a time. Each time you fix one, re-run and record the numbers.
-
-| Problem you found | Why is it bad? | `exec/s` after fix | `cov` after fix |
-|-------------------|----------------|--------------------|-----------------|
-|                   |                |                    |                 |
-|                   |                |                    |                 |
-|                   |                |                    |                 |
-|                   |                |                    |                 |
-
-> _Of the problems you fixed, which one had the biggest impact on `exec/s`? Which on `cov`? Which one hid findings entirely?_
->
->
->
-
----
-
-## Checkpoint 5 - Fuzz blockers
+## Checkpoint 4 - Fuzz blockers
 
 You just fixed some problems in your OWN code. There is a related concept for problems in the CODE UNDER TEST: a **fuzz blocker** is a piece of code in the target that prevents the fuzzer from reaching interesting inputs no matter how long it runs. Common examples:
 
